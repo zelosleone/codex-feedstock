@@ -1,6 +1,6 @@
 context:
   name: codex
-  version: 0.1.2504161551
+  version: "0.1.2504172351"
 
 package:
   name: ${{ name|lower }}
@@ -8,7 +8,7 @@ package:
 
 source:
   url: https://registry.npmjs.org/@openai/codex/-/codex-${{ version }}.tgz
-  sha256: 1036cd6ad6d6aa7490c8a8123704435af426efd48bebbe3f32539ac4b4c577a1
+  sha256: 3e7430e7d9e54fb766d438ee660062446bfcada18acbdec2d7fd59a251447ed7
 
 build:
   number: 0
@@ -25,7 +25,7 @@ requirements:
 
 tests:
   - script:
-    - codex --version
+      - codex --version
 
 about:
   summary: Lightweight coding agent that runs in your terminal
