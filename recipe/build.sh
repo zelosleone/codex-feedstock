@@ -17,7 +17,12 @@ npm install -ddd \
 pnpm install
 pnpm-licenses generate-disclaimer --prod --output-file=third-party-licenses.txt
 
-# Create batch wrapper
-tee ${PREFIX}/bin/codex.cmd << EOF
-call %CONDA_PREFIX%\bin\node %CONDA_PREFIX%\bin\codex %*
+# Remove the symlink created by npm and create a proper wrapper script
+rm -f ${PREFIX}/bin/codex
+
+# Create wrapper script
+tee ${PREFIX}/bin/codex << 'EOF'
+#!/usr/bin/env bash
+exec node "${CONDA_PREFIX}/lib/node_modules/@openai/codex/bin/codex.js" "$@"
 EOF
+chmod +x ${PREFIX}/bin/codex
