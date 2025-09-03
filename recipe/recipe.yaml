@@ -1,27 +1,34 @@
 context:
   name: codex
-  version: "0.28.0"
+  version: "0.29.0"
 
 package:
   name: ${{ name|lower }}
   version: ${{ version }}
 
 source:
-  url: https://github.com/openai/codex/releases/download/rust-v${{ version }}/codex-npm-${{ version }}.tgz
-  sha256: 411fba3813bf78dcc69c7c1aa7c02b2f161a4f12e32b48e5f8fbbbc47020669c
+  url: https://github.com/openai/codex/archive/refs/tags/rust-v${{ version }}.tar.gz
+  sha256: 512d4ebd7d63ac826c13bd197e425851b08778500bffbbc5a6b92930715897fb
 
 build:
   number: 0
-  noarch: generic
 
 
 requirements:
   build:
-    - nodejs
-    - pnpm
-    - pnpm-licenses
-  run:
-    - nodejs
+    - ${{ compiler('rust') }}
+    - ${{ compiler('c') }}
+    - ${{ compiler('cxx') }}
+    - ${{ stdlib('c') }}
+    - cargo-bundle-licenses
+    - cmake
+    - pkg-config
+    - openssl
+
+  host:
+    - openssl
+    - cmake
+    - curl
 
 tests:
   - script:
@@ -32,7 +39,8 @@ about:
   homepage: https://github.com/openai/codex
   license: Apache-2.0
   license_file:
-    - third-party-licenses.txt
+    - LICENSE
+    - THIRDPARTY.yml
 
 extra:
   recipe-maintainers:

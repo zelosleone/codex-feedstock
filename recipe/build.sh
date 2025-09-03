@@ -2,27 +2,12 @@
 
 set -o xtrace -o nounset -o pipefail -o errexit
 
-# Patch package.json to skip unnecessary prepare step
-mv package.json package.json.bak
-jq "del(.scripts.prepare)" < package.json.bak > package.json
+export CFLAGS="$CFLAGS -D_GNU_SOURCE"
+export CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE"
 
-# Create package archive and install globally
-npm pack --ignore-scripts
-npm install -ddd \
-    --global \
-    --build-from-source \
-    ./openai-codex-${PKG_VERSION}.tgz
+cd codex-rs
+cargo-bundle-licenses --format yaml --output ../THIRDPARTY.yml
+cargo build --release
 
-# Create license report for dependencies
-pnpm install
-pnpm-licenses generate-disclaimer --prod --output-file=third-party-licenses.txt
-
-# Remove the symlink created by npm and create a proper wrapper script
-rm -f ${PREFIX}/bin/codex
-
-# Create wrapper script
-tee ${PREFIX}/bin/codex << 'EOF'
-#!/usr/bin/env bash
-exec node "${CONDA_PREFIX}/lib/node_modules/@openai/codex/bin/codex.js" "$@"
-EOF
-chmod +x ${PREFIX}/bin/codex
+mkdir -p "$PREFIX/bin"
+install -m0755 "target/${CARGO_BUILD_TARGET}/release/codex" "$PREFIX/bin/"
