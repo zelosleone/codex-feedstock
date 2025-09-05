@@ -13,4 +13,4 @@ openssl:
 rust_compiler:
 - rust
 target_platform:
-- win-64
+- win-arm64

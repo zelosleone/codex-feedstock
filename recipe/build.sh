@@ -7,7 +7,11 @@ export CXXFLAGS="$CXXFLAGS -D_GNU_SOURCE"
 
 cd codex-rs
 cargo-bundle-licenses --format yaml --output ../THIRDPARTY.yml
-cargo build --release
 
-mkdir -p "$PREFIX/bin"
-install -m0755 "target/${CARGO_BUILD_TARGET}/release/codex" "$PREFIX/bin/"
+# Use cargo install with explicit target for cross-compilation (this is needed, otherwise linking fails)
+if [ -n "${CARGO_BUILD_TARGET:-}" ]; then
+    echo "Building for target: ${CARGO_BUILD_TARGET}"
+    cargo install --locked --no-track --bins --root "${PREFIX}" --path cli --target "${CARGO_BUILD_TARGET}"
+else
+    cargo install --locked --no-track --bins --root "${PREFIX}" --path cli
+fi
